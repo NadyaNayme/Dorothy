@@ -3,12 +3,17 @@
 extern crate native_windows_gui as nwg;
 extern crate native_windows_derive as nwd;
 extern crate ini;
+extern crate csv;
 
+use std::fs::OpenOptions;
+use std::error::Error;
 use std::fs;
 use std::path::Path;
 use nwd::NwgUi;
 use nwg::NativeUi;
 use ini::Ini;
+use chrono::{DateTime, Local};
+use serde::{Serialize};
 
 static BLUE_CHEST: &[u8] = include_bytes!("./images/blue_chest.ico");
 static NO_BLUE_CHEST: &[u8] = include_bytes!("./images/no_blue_chest.ico");
@@ -17,8 +22,20 @@ static L_RING: &[u8] = include_bytes!("./images/lineage_ring.ico");
 static I_RING: &[u8] = include_bytes!("./images/intricacy_ring.ico");
 static GOLD_BAR: &[u8] = include_bytes!("./images/hihi.ico");
 
+#[derive(Debug, Serialize)]
+struct Record {
+    date: String,
+    blue_boxes: String,
+    no_blue_boxes: String,
+    coronation_rings: String,
+    lineage_rings: String,
+    intricacy_rings: String,
+    gold_bars: String,
+}
+
 #[derive(Default, NwgUi)]
 pub struct BarTracker {
+
     #[nwg_control(size: (300, 300), position: (500, 500), title: "Dorothy", flags: "WINDOW|VISIBLE")]
     #[nwg_events(OnWindowClose: [BarTracker::kill_app], OnInit: [BarTracker::init])]
     window: nwg::Window,
@@ -124,6 +141,10 @@ pub struct BarTracker {
         #[nwg_control(text: "-1", font: Some(&data.font), size: (32, 32), position: (260, 240))]
         #[nwg_events(OnButtonClick: [BarTracker::subtract_gold_bars], OnButtonDoubleClick: [BarTracker::subtract_gold_bars])]
         gold_bars_subtract_button: nwg::Button,
+
+    #[nwg_control(text: "Export", font: Some(&data.font), size: (60, 32), position: (230, 30))]
+    #[nwg_events(OnButtonClick: [BarTracker::app_export_csv])]
+    export: nwg::Button,
 }
 
 impl BarTracker {
@@ -131,6 +152,15 @@ impl BarTracker {
     fn init(&self) {
         let em = &self.embed;
         self.window.set_icon(em.icon_str("DOROTHY", None).as_ref());
+    }
+
+    fn update_labels(&self) {
+        self.blue_box_label.set_text("0");
+        self.no_blue_box_label.set_text("0");
+        self.coronation_ring_label.set_text("0");
+        self.lineage_ring_label.set_text("0");
+        self.intricacy_ring_label.set_text("0");
+        self.gold_bar_label.set_text("0");
     }
 
     fn change_value(&self, field: &str, add: bool) {
@@ -271,6 +301,15 @@ impl BarTracker {
         self.change_value("gold_bars", false);
     }
 
+    fn app_export_csv(&self) {
+        let _ = &export_csv();
+        let _ = self.update_labels();
+        let _ = self.calculate_coronation_rings();
+        let _ = self.calculate_lineage_rings();
+        let _ = self.calculate_intricacy_rings();
+        let _ = self.calculate_gold_bars();
+    }
+
     fn kill_app(&self) {
         nwg::stop_thread_dispatch();
     }
@@ -307,13 +346,56 @@ fn set_db_value(field: &str, total: &str) {
         save_db(conf);
 }
 
-fn create_db_path() -> std::io::Result<()> {
-    fs::create_dir("./db/")?;
+fn export_csv() -> Result<(), Box<dyn Error>> {
+    let export_time: DateTime<Local> = Local::now();
+    let export_four_digit_year = export_time.format("%Y").to_string();
+    let export_month = export_time.format("%m").to_string();
+    let export_day = export_time.format("%d").to_string();
+    if !Path::new("./exports/").exists() {
+        create_path("./exports/")?;
+    }
+    let str_path = format!("./exports/{}-{}-{}.csv", &export_four_digit_year, &export_month, &export_day);
+
+    if Path::new("./exports/").exists() {
+        let file = OpenOptions::new().write(true).create(true).append(true).open(&str_path).unwrap();
+        let mut wtr = csv::Writer::from_writer(&file);
+
+        let logdata = Record {
+            date: export_time.format("%Y-%m-%d %H:%M:%S").to_string(),
+            blue_boxes: get_db_value("blue_boxes").to_string(),
+            no_blue_boxes: get_db_value("no_blue_boxes").to_string(),
+            coronation_rings: get_db_value("coronation_rings").to_string(),
+            lineage_rings: get_db_value("lineage_rings").to_string(),
+            intricacy_rings: get_db_value("intricacy_rings").to_string(),
+            gold_bars: get_db_value("gold_bars").to_string(),
+        };
+
+        wtr.serialize(logdata)?;
+        reset_log();
+        wtr.flush()?;
+    }
     Ok(())
 }
 
+fn create_path(path: &str) -> std::io::Result<()> {
+    fs::create_dir(path)?;
+    Ok(())
+}
+
+fn reset_log() {
+        let mut conf = get_db();
+        conf.with_section(Some("drops"))
+            .set("no_blue_boxes", "0")
+            .set("blue_boxes", "0")
+            .set("coronation_rings", "0")
+            .set("lineage_rings", "0")
+            .set("intricacy_rings", "0")
+            .set("gold_bars", "0");
+        save_db(conf);
+}
+
 fn create_new_log() {
-    match create_db_path() {
+    match create_path("./db/") {
         Err(e) => println!("Could not create folder: {:?}", e),
         _ => ()
     }
