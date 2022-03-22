@@ -154,7 +154,7 @@ impl BarTracker {
         self.window.set_icon(em.icon_str("DOROTHY", None).as_ref());
     }
 
-    fn update_labels(&self) {
+    fn reset_labels(&self) {
         self.blue_box_label.set_text("0");
         self.no_blue_box_label.set_text("0");
         self.coronation_ring_label.set_text("0");
@@ -303,11 +303,14 @@ impl BarTracker {
 
     fn app_export_csv(&self) {
         let _ = &export_csv();
-        let _ = self.update_labels();
-        let _ = self.calculate_coronation_rings();
-        let _ = self.calculate_lineage_rings();
-        let _ = self.calculate_intricacy_rings();
-        let _ = self.calculate_gold_bars();
+        let no_reset = get_settings_value("no_reset");
+        if no_reset == "0" {
+            let _ = self.reset_labels();
+            let _ = self.calculate_coronation_rings();
+            let _ = self.calculate_lineage_rings();
+            let _ = self.calculate_intricacy_rings();
+            let _ = self.calculate_gold_bars();
+        }
     }
 
     fn kill_app(&self) {
@@ -371,7 +374,10 @@ fn export_csv() -> Result<(), Box<dyn Error>> {
         };
 
         wtr.serialize(logdata)?;
-        reset_log();
+        let no_reset = get_settings_value("no_reset");
+        if no_reset == "0" {
+            reset_log();
+        }
         wtr.flush()?;
     }
     Ok(())
@@ -403,7 +409,8 @@ fn create_new_log() {
         let mut conf = Ini::new();
         conf.with_section(None::<String>).set("encoding", "utf-8");
         conf.with_section(Some("settings"))
-            .set("only_blues", "1");
+            .set("only_blues", "1")
+            .set("no_reset", "0");
         conf.with_section(Some("drops"))
             .set("no_blue_boxes", "0")
             .set("blue_boxes", "0")
