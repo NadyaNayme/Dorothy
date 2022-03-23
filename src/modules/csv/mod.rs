@@ -44,12 +44,12 @@ pub fn export_csv() -> Result<(), Box<dyn Error>> {
 
         let logdata = Record {
             date: export_time.format("%Y-%m-%d %H:%M:%S").to_string(),
-            blue_boxes: get_db_value("blue_boxes").to_string(),
-            no_blue_boxes: get_db_value("no_blue_boxes").to_string(),
-            coronation_rings: get_db_value("coronation_rings").to_string(),
-            lineage_rings: get_db_value("lineage_rings").to_string(),
-            intricacy_rings: get_db_value("intricacy_rings").to_string(),
-            gold_bars: get_db_value("gold_bars").to_string(),
+            blue_boxes: get_db_value("blue_boxes"),
+            no_blue_boxes: get_db_value("no_blue_boxes"),
+            coronation_rings: get_db_value("coronation_rings"),
+            lineage_rings: get_db_value("lineage_rings"),
+            intricacy_rings: get_db_value("intricacy_rings"),
+            gold_bars: get_db_value("gold_bars"),
         };
 
         wtr.serialize(logdata)?;

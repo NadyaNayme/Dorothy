@@ -33,12 +33,12 @@ pub struct BarTracker {
     //#[nwg_events((handle, OnImageFrameClick): [BarTracker::change_value], OnImageFrameDoubleClick: [BarTracker::subtract_value] )]
     #[nwg_control(size: (32, 32), position: (10, 40), icon: Some(&nwg::Icon::from_bin(BLUE_CHEST)?))]
     blue_box: nwg::ImageFrame,
-    #[nwg_control(text: &mut crate::modules::database::get_db_value("blue_boxes"), font: Some(&data.font), size: (50, 25), position: (48, 47))]
+    #[nwg_control(text: &crate::modules::database::get_db_value("blue_boxes"), font: Some(&data.font), size: (50, 25), position: (48, 47))]
     blue_box_label: nwg::Label,
 
     #[nwg_control(size: (32, 32), position: (10, 80), icon: Some(&nwg::Icon::from_bin(NO_BLUE_CHEST)?))]
     no_blue_box: nwg::ImageFrame,
-    #[nwg_control(text: &mut crate::modules::database::get_db_value("no_blue_boxes"), font: Some(&data.font), size: (30, 16), position: (48, 87))]
+    #[nwg_control(text: &crate::modules::database::get_db_value("no_blue_boxes"), font: Some(&data.font), size: (30, 16), position: (48, 87))]
     no_blue_box_label: nwg::Label,
 
     #[nwg_control(text: "+1", font: Some(&data.font), size: (32, 32), position: (225, 80))]
@@ -51,7 +51,7 @@ pub struct BarTracker {
 
     #[nwg_control(size: (32, 32), position: (10, 120), icon: Some(&nwg::Icon::from_bin(C_RING)?))]
     coronation_ring: nwg::ImageFrame,
-    #[nwg_control(text: &mut crate::modules::database::get_db_value("coronation_rings"), font: Some(&data.font), size: (30, 16), position: (48, 120))]
+    #[nwg_control(text: &crate::modules::database::get_db_value("coronation_rings"), font: Some(&data.font), size: (30, 16), position: (48, 120))]
     coronation_ring_label: nwg::Label,
 
     #[nwg_control(text: "TBD", font: Some(&data.smallfont), size: (50, 16), position: (48, 134))]
@@ -67,7 +67,7 @@ pub struct BarTracker {
 
     #[nwg_control(size: (32, 32), position: (10, 160), icon: Some(&nwg::Icon::from_bin(L_RING)?))]
     lineage_ring: nwg::ImageFrame,
-    #[nwg_control(text: &mut crate::modules::database::get_db_value("lineage_rings"), font: Some(&data.font), size: (30, 16), position: (48, 160))]
+    #[nwg_control(text: &crate::modules::database::get_db_value("lineage_rings"), font: Some(&data.font), size: (30, 16), position: (48, 160))]
     lineage_ring_label: nwg::Label,
 
     #[nwg_control(text: "TBD", font: Some(&data.smallfont), size: (50, 16), position: (48, 174))]
@@ -83,7 +83,7 @@ pub struct BarTracker {
 
     #[nwg_control(size: (32, 32), position: (10, 200), icon: Some(&nwg::Icon::from_bin(I_RING)?))]
     intricacy_ring: nwg::ImageFrame,
-    #[nwg_control(text: &mut crate::modules::database::get_db_value("intricacy_rings"), font: Some(&data.font), size: (30, 16), position: (48, 200))]
+    #[nwg_control(text: &crate::modules::database::get_db_value("intricacy_rings"), font: Some(&data.font), size: (30, 16), position: (48, 200))]
     intricacy_ring_label: nwg::Label,
 
     #[nwg_control(text: "TBD", font: Some(&data.smallfont), size: (50, 16), position: (48, 214))]
@@ -99,7 +99,7 @@ pub struct BarTracker {
 
     #[nwg_control(size: (32, 32), position: (10, 240), icon: Some(&nwg::Icon::from_bin(GOLD_BAR)?))]
     gold_bar: nwg::ImageFrame,
-    #[nwg_control(text: &mut crate::modules::database::get_db_value("gold_bars"), font: Some(&data.font), size: (30, 16), position: (48, 240))]
+    #[nwg_control(text: &crate::modules::database::get_db_value("gold_bars"), font: Some(&data.font), size: (30, 16), position: (48, 240))]
     gold_bar_label: nwg::Label,
 
     #[nwg_control(text: "TBD", font: Some(&data.smallfont), size: (50, 16), position: (48, 254))]
@@ -162,15 +162,15 @@ impl BarTracker {
         }
 
         if add {
-            total_chests = total_chests + 1;
+            total_chests += 1;
         } else {
-            total_chests = total_chests - 1;
+            total_chests -= 1;
             if total_chests < 0 {
                 total_chests = 0;
             }
         }
 
-        crate::modules::database::set_db_value(&field, &total_chests.to_string());
+        crate::modules::database::set_db_value(field, &total_chests.to_string());
         label.set_text(&total_chests.to_string());
 
         self.calculate_coronation_rings();

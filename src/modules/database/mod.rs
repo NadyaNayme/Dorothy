@@ -50,10 +50,10 @@ pub fn reset_log() {
 }
 
 pub fn create_new_log() {
-    match create_path("./db/") {
-        Err(e) => println!("Could not create folder: {:?}", e),
-        _ => (),
+    if let Err(e) = create_path("./db/") {
+        println!("Could not create folder: {:?}", e)
     }
+
     if !Path::new("./db/log.ini").exists() {
         let mut conf = Ini::new();
         conf.with_section(None::<String>).set("encoding", "utf-8");
