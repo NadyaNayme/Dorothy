@@ -1,7 +1,7 @@
 # Dorothy
 A gold bar/blue box drop logger for Granblue Fantasy.
 
-![Dorothy UI](https://github.com/NadyaNayme/Dorothy/blob/master/src/images/dorothy_ui.png?)
+![Dorothy UI](https://github.com/NadyaNayme/Dorothy/blob/master/src/gui/images/dorothy_ui.png?)
 
 ## How to Use
 Click the +1 to add a drop and the -1 to subtract a drop. Don't forget to eat your crayons.
