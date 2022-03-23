@@ -1,7 +1,7 @@
 use ini::Ini;
 use std::path::Path;
 
-use crate::modules::*;
+use crate::modules::utility::create_path;
 
 pub fn get_db() -> ini::Ini {
     return Ini::load_from_file(Path::new("./db/log.ini")).unwrap();

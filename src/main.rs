@@ -6,10 +6,11 @@ use nwg::NativeUi;
 
 mod gui;
 mod modules;
-use crate::gui::*;
+use gui::BarTracker;
+use modules::database;
 
 fn main() {
-    modules::database::create_new_log();
+    database::create_new_log();
     nwg::init().expect("Failed to init Native Windows GUI");
     let _app = BarTracker::build_ui(Default::default()).expect("Failed to build UI");
     nwg::dispatch_thread_events();

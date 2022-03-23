@@ -6,8 +6,8 @@ use std::error::Error;
 use std::fs::OpenOptions;
 use std::path::Path;
 
-use crate::modules::database::*;
-use crate::modules::*;
+use crate::modules::database::{get_db_value, get_settings_value};
+use crate::modules::utility::create_path;
 
 #[derive(Debug, Serialize)]
 pub struct Record {

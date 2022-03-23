@@ -2,7 +2,7 @@ extern crate native_windows_derive as nwd;
 extern crate native_windows_gui as nwg;
 use nwd::NwgUi;
 
-use crate::modules::*;
+use crate::modules::utility::get_percentage;
 
 static BLUE_CHEST: &[u8] = include_bytes!("./images/blue_chest.ico");
 static NO_BLUE_CHEST: &[u8] = include_bytes!("./images/no_blue_chest.ico");
