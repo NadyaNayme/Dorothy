@@ -1,13 +1,13 @@
 extern crate csv;
 
-use std::path::Path;
 use chrono::{DateTime, Local};
-use serde::{Serialize};
+use serde::Serialize;
 use std::error::Error;
 use std::fs::OpenOptions;
+use std::path::Path;
 
-use crate::modules::*;
 use crate::modules::database::*;
+use crate::modules::*;
 
 #[derive(Debug, Serialize)]
 pub struct Record {
@@ -28,10 +28,18 @@ pub fn export_csv() -> Result<(), Box<dyn Error>> {
     if !Path::new("./exports/").exists() {
         create_path("./exports/")?;
     }
-    let str_path = format!("./exports/{}-{}-{}.csv", &export_four_digit_year, &export_month, &export_day);
+    let str_path = format!(
+        "./exports/{}-{}-{}.csv",
+        &export_four_digit_year, &export_month, &export_day
+    );
 
     if Path::new("./exports/").exists() {
-        let file = OpenOptions::new().write(true).create(true).append(true).open(&str_path).unwrap();
+        let file = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .append(true)
+            .open(&str_path)
+            .unwrap();
         let mut wtr = csv::Writer::from_writer(&file);
 
         let logdata = Record {

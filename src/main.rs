@@ -1,11 +1,11 @@
 #![windows_subsystem = "windows"]
 
-extern crate native_windows_gui as nwg;
 extern crate native_windows_derive as nwd;
+extern crate native_windows_gui as nwg;
 use nwg::NativeUi;
 
-mod modules;
 mod gui;
+mod modules;
 use crate::gui::*;
 
 fn main() {
