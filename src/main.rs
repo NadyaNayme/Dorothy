@@ -1,16 +1,17 @@
 #![windows_subsystem = "windows"]
 
-extern crate native_windows_derive as nwd;
-extern crate native_windows_gui as nwg;
+use native_windows_gui as nwg;
 use nwg::NativeUi;
 
-mod gui;
+mod gui {
+    pub mod gui;
+}
 mod modules {
     pub mod csv;
     pub mod database;
     pub mod utility;
 }
-use gui::BarTracker;
+use gui::gui::BarTracker;
 use modules::database::create_new_log;
 
 fn main() {
