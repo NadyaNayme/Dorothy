@@ -54,7 +54,7 @@ pub struct BarTracker {
     #[nwg_control(text: &crate::modules::database::get_db_value("coronation_rings"), font: Some(&data.font), size: (30, 16), position: (48, 120))]
     coronation_ring_label: nwg::Label,
 
-    #[nwg_control(text: "TBD", font: Some(&data.smallfont), size: (50, 16), position: (48, 134))]
+    #[nwg_control(text: "", font: Some(&data.smallfont), size: (50, 16), position: (48, 134))]
     coronation_ring_percentage: nwg::Label,
 
     #[nwg_control(text: "+1", font: Some(&data.font), size: (32, 32), position: (225, 120))]
@@ -70,7 +70,7 @@ pub struct BarTracker {
     #[nwg_control(text: &crate::modules::database::get_db_value("lineage_rings"), font: Some(&data.font), size: (30, 16), position: (48, 160))]
     lineage_ring_label: nwg::Label,
 
-    #[nwg_control(text: "TBD", font: Some(&data.smallfont), size: (50, 16), position: (48, 174))]
+    #[nwg_control(text: "", font: Some(&data.smallfont), size: (50, 16), position: (48, 174))]
     lineage_ring_percentage: nwg::Label,
 
     #[nwg_control(text: "+1", font: Some(&data.font), size: (32, 32), position: (225, 160))]
@@ -86,7 +86,7 @@ pub struct BarTracker {
     #[nwg_control(text: &crate::modules::database::get_db_value("intricacy_rings"), font: Some(&data.font), size: (30, 16), position: (48, 200))]
     intricacy_ring_label: nwg::Label,
 
-    #[nwg_control(text: "TBD", font: Some(&data.smallfont), size: (50, 16), position: (48, 214))]
+    #[nwg_control(text: "", font: Some(&data.smallfont), size: (50, 16), position: (48, 214))]
     intricacy_ring_percentage: nwg::Label,
 
     #[nwg_control(text: "+1", font: Some(&data.font), size: (32, 32), position: (225, 200))]
@@ -102,7 +102,7 @@ pub struct BarTracker {
     #[nwg_control(text: &crate::modules::database::get_db_value("gold_bars"), font: Some(&data.font), size: (30, 16), position: (48, 240))]
     gold_bar_label: nwg::Label,
 
-    #[nwg_control(text: "TBD", font: Some(&data.smallfont), size: (50, 16), position: (48, 254))]
+    #[nwg_control(text: "", font: Some(&data.smallfont), size: (50, 16), position: (48, 254))]
     gold_bar_percentage: nwg::Label,
 
     #[nwg_control(text: "+1", font: Some(&data.font), size: (32, 32), position: (225, 240))]
@@ -122,6 +122,10 @@ impl BarTracker {
     fn init(&self) {
         let em = &self.embed;
         self.window.set_icon(em.icon_str("DOROTHY", None).as_ref());
+        self.calculate_coronation_rings();
+        self.calculate_lineage_rings();
+        self.calculate_intricacy_rings();
+        self.calculate_gold_bars();
     }
 
     fn reset_labels(&self) {
