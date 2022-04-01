@@ -12,12 +12,25 @@ use crate::modules::utility::create_path;
 #[derive(Debug, Serialize)]
 pub struct Record {
     date: String,
-    blue_boxes: String,
-    no_blue_boxes: String,
-    coronation_rings: String,
-    lineage_rings: String,
-    intricacy_rings: String,
-    gold_bars: String,
+    akasha_blue_boxes: String,
+    akasha_no_blue_boxes: String,
+    akasha_coronation_rings: String,
+    akasha_lineage_rings: String,
+    akasha_intricacy_rings: String,
+    akasha_gold_bars: String,
+    pbhl_blue_boxes: String,
+    pbhl_no_blue_boxes: String,
+    pbhl_coronation_rings: String,
+    pbhl_lineage_rings: String,
+    pbhl_intricacy_rings: String,
+    pbhl_gold_bars: String,
+    gohl_blue_boxes: String,
+    gohl_no_blue_boxes: String,
+    gohl_coronation_rings: String,
+    gohl_lineage_rings: String,
+    gohl_intricacy_rings: String,
+    gohl_steel_bars: String,
+    gohl_gold_bars: String,
 }
 
 pub fn export_csv() -> Result<(), Box<dyn Error>> {
@@ -44,12 +57,25 @@ pub fn export_csv() -> Result<(), Box<dyn Error>> {
 
         let logdata = Record {
             date: export_time.format("%Y-%m-%d %H:%M:%S").to_string(),
-            blue_boxes: get_db_value("blue_boxes"),
-            no_blue_boxes: get_db_value("no_blue_boxes"),
-            coronation_rings: get_db_value("coronation_rings"),
-            lineage_rings: get_db_value("lineage_rings"),
-            intricacy_rings: get_db_value("intricacy_rings"),
-            gold_bars: get_db_value("gold_bars"),
+            akasha_blue_boxes: get_db_value("akasha_blue_boxes"),
+            akasha_no_blue_boxes: get_db_value("akasha_no_blue_boxes"),
+            akasha_coronation_rings: get_db_value("akasha_coronation_rings"),
+            akasha_lineage_rings: get_db_value("akasha_lineage_rings"),
+            akasha_intricacy_rings: get_db_value("akasha_intricacy_rings"),
+            akasha_gold_bars: get_db_value("akasha_gold_bars"),
+            pbhl_blue_boxes: get_db_value("pbhl_blue_boxes"),
+            pbhl_no_blue_boxes: get_db_value("pbhl_no_blue_boxes"),
+            pbhl_coronation_rings: get_db_value("pbhl_coronation_rings"),
+            pbhl_lineage_rings: get_db_value("pbhl_lineage_rings"),
+            pbhl_intricacy_rings: get_db_value("pbhl_intricacy_rings"),
+            pbhl_gold_bars: get_db_value("pbhl_gold_bars"),
+            gohl_blue_boxes: get_db_value("gohl_blue_boxes"),
+            gohl_no_blue_boxes: get_db_value("gohl_no_blue_boxes"),
+            gohl_coronation_rings: get_db_value("gohl_coronation_rings"),
+            gohl_lineage_rings: get_db_value("gohl_lineage_rings"),
+            gohl_intricacy_rings: get_db_value("gohl_intricacy_rings"),
+            gohl_steel_bars: get_db_value("gohl_steel_bars"),
+            gohl_gold_bars: get_db_value("gohl_gold_bars"),
         };
 
         wtr.serialize(logdata)?;

@@ -40,12 +40,25 @@ pub fn set_db_value(field: &str, total: &str) {
 pub fn reset_log() {
     let mut conf = get_db();
     conf.with_section(Some("drops"))
-        .set("no_blue_boxes", "0")
-        .set("blue_boxes", "0")
-        .set("coronation_rings", "0")
-        .set("lineage_rings", "0")
-        .set("intricacy_rings", "0")
-        .set("gold_bars", "0");
+        .set("akasha_no_blue_boxes", "0")
+        .set("akasha_blue_boxes", "0")
+        .set("akasha_coronation_rings", "0")
+        .set("akasha_lineage_rings", "0")
+        .set("akasha_intricacy_rings", "0")
+        .set("akasha_gold_bars", "0")
+        .set("pbhl_no_blue_boxes", "0")
+        .set("pbhl_blue_boxes", "0")
+        .set("pbhl_coronation_rings", "0")
+        .set("pbhl_lineage_rings", "0")
+        .set("pbhl_intricacy_rings", "0")
+        .set("pbhl_gold_bars", "0")
+        .set("gohl_no_blue_boxes", "0")
+        .set("gohl_blue_boxes", "0")
+        .set("gohl_coronation_rings", "0")
+        .set("gohl_lineage_rings", "0")
+        .set("gohl_intricacy_rings", "0")
+        .set("gohl_steel_bars", "0")
+        .set("gohl_gold_bars", "0");
     save_db(conf);
 }
 
@@ -59,14 +72,28 @@ pub fn create_new_log() {
         conf.with_section(None::<String>).set("encoding", "utf-8");
         conf.with_section(Some("settings"))
             .set("only_blues", "1")
-            .set("no_reset", "0");
+            .set("no_reset", "0")
+            .set("holding_shift", "0");
         conf.with_section(Some("drops"))
-            .set("no_blue_boxes", "0")
-            .set("blue_boxes", "0")
-            .set("coronation_rings", "0")
-            .set("lineage_rings", "0")
-            .set("intricacy_rings", "0")
-            .set("gold_bars", "0");
+            .set("akasha_no_blue_boxes", "0")
+            .set("akasha_blue_boxes", "0")
+            .set("akasha_coronation_rings", "0")
+            .set("akasha_lineage_rings", "0")
+            .set("akasha_intricacy_rings", "0")
+            .set("akasha_gold_bars", "0")
+            .set("pbhl_no_blue_boxes", "0")
+            .set("pbhl_blue_boxes", "0")
+            .set("pbhl_coronation_rings", "0")
+            .set("pbhl_lineage_rings", "0")
+            .set("pbhl_intricacy_rings", "0")
+            .set("pbhl_gold_bars", "0")
+            .set("gohl_no_blue_boxes", "0")
+            .set("gohl_blue_boxes", "0")
+            .set("gohl_coronation_rings", "0")
+            .set("gohl_lineage_rings", "0")
+            .set("gohl_intricacy_rings", "0")
+            .set("gohl_steel_bars", "0")
+            .set("gohl_gold_bars", "0");
         save_db(conf);
     }
 }
