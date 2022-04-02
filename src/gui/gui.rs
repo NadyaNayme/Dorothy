@@ -251,7 +251,15 @@ pub struct BarTracker {
 
 impl BarTracker {
 
+    fn init(&self) {
+        let em = &self.embed;
+        self.window.set_icon(em.icon_str("DOROTHY", None).as_ref());
+        self.show_ui_tab(&self.pbhl_ui_button);
+        self.calculate_droprates();
+    }
+
     fn akasha_ui(&self, v: bool) {
+            self.akasha_ui_button.set_enabled(!v);
             self.akasha_blue_box_label.set_visible(v);
             self.akasha_blue_box.set_visible(v);
             self.akasha_no_blue_box.set_visible(v);
@@ -276,6 +284,7 @@ impl BarTracker {
     }
 
     fn pbhl_ui(&self, v: bool) {
+            self.pbhl_ui_button.set_enabled(!v);
             self.pbhl_blue_box_label.set_visible(v);
             self.pbhl_blue_box.set_visible(v);
             self.pbhl_no_blue_box.set_visible(v);
@@ -300,6 +309,7 @@ impl BarTracker {
     }
 
     fn gohl_ui(&self, v: bool) {
+            self.gohl_ui_button.set_enabled(!v);
             self.gohl_blue_box_label.set_visible(v);
             self.gohl_blue_box.set_visible(v);
             self.gohl_no_blue_box.set_visible(v);
@@ -327,40 +337,23 @@ impl BarTracker {
             self.gohl_steel_bars_button.set_visible(v);
     }
 
-    fn init(&self) {
-        let em = &self.embed;
-        self.window.set_icon(em.icon_str("DOROTHY", None).as_ref());
-        self.show_ui_tab(&self.pbhl_ui_button);
-        self.calculate_droprates();
-    }
-
     fn show_ui_tab(&self, btn: &nwg::Button) {
         if btn == &self.akasha_ui_button {
             self.akasha_ui(true);
             self.pbhl_ui(false);
             self.gohl_ui(false);
-            self.akasha_ui_button.set_enabled(false);
-            self.pbhl_ui_button.set_enabled(true);
-            self.gohl_ui_button.set_enabled(true);
             self.hosts_ui_button.set_visible(false);
         } else if btn == &self.pbhl_ui_button {
             self.akasha_ui(false);
             self.pbhl_ui(true);
             self.gohl_ui(false);
-            self.akasha_ui_button.set_enabled(true);
-            self.pbhl_ui_button.set_enabled(false);
-            self.gohl_ui_button.set_enabled(true);
             self.hosts_ui_button.set_visible(false);
         } else if btn == &self.gohl_ui_button {
             self.akasha_ui(false);
             self.pbhl_ui(false);
             self.gohl_ui(true);
-            self.akasha_ui_button.set_enabled(true);
-            self.pbhl_ui_button.set_enabled(true);
-            self.gohl_ui_button.set_enabled(false);
             self.hosts_ui_button.set_visible(false);
         } else if btn == &self.hosts_ui_button {
-            self.hosts_ui_button.set_enabled(false);
             self.akasha_ui(false);
             self.pbhl_ui(false);
             self.gohl_ui(false);
