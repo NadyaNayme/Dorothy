@@ -556,20 +556,28 @@ impl BarTracker {
     }
 
     fn calculate_droprates(&self) {
-        self.calculate_droprate("akasha_coronation_rings");
-        self.calculate_droprate("akasha_lineage_rings");
-        self.calculate_droprate("akasha_intricacy_rings");
-        self.calculate_droprate("akasha_gold_bars");
-        self.calculate_droprate("pbhl_coronation_rings");
-        self.calculate_droprate("pbhl_lineage_rings");
-        self.calculate_droprate("pbhl_intricacy_rings");
-        self.calculate_droprate("pbhl_gold_bars");
-        self.calculate_droprate("gohl_coronation_rings");
-        self.calculate_droprate("gohl_lineage_rings");
-        self.calculate_droprate("gohl_intricacy_rings");
-        self.calculate_droprate("gohl_gold_bars");
-        self.calculate_droprate("gohl_steel_bars");
+        let percentage_controls = vec![
+            "akasha_coronation_rings",
+            "akasha_lineage_rings",
+            "akasha_intricacy_rings",
+            "akasha_gold_bars",
+            "pbhl_coronation_rings",
+            "pbhl_lineage_rings",
+            "pbhl_intricacy_rings",
+            "pbhl_gold_bars",
+            "gohl_coronation_rings",
+            "gohl_lineage_rings",
+            "gohl_intricacy_rings",
+            "gohl_gold_bars",
+            "gohl_steel_bars",
+        ];
+
+        for percentage_control in percentage_controls {
+            self.calculate_droprate(percentage_control);
+        }
     }
+
+
 
     fn add_blue_boxes(&self, raid: &str) {
         if raid == "akasha" {
