@@ -580,22 +580,20 @@ impl BarTracker {
 
 
     fn add_blue_boxes(&self, raid: &str) {
-        if raid == "akasha" {
-            self.change_value("akasha_blue_boxes", true);
-        } else if raid == "pbhl" {
-            self.change_value("pbhl_blue_boxes", true);
-        } else if raid == "gohl" {
-            self.change_value("gohl_blue_boxes", true);
+        match raid {
+            "akasha" => self.change_value("akasha_blue_boxes", true),
+            "pbhl" => self.change_value("pbhl_blue_boxes", true),
+            "gohl" => self.change_value("gohl_blue_boxes", true),
+            _ => unreachable!()
         }
     }
 
     fn subtract_blue_boxes(&self, raid: &str) {
-        if raid == "akasha" {
-            self.change_value("akasha_blue_boxes", false);
-        } else if raid == "pbhl" {
-            self.change_value("pbhl_blue_boxes", false);
-        } else if raid == "gohl" {
-            self.change_value("gohl_blue_boxes", false);
+        match raid {
+            "akasha" => self.change_value("akasha_blue_boxes", false),
+            "pbhl" => self.change_value("pbhl_blue_boxes", false),
+            "gohl" => self.change_value("gohl_blue_boxes", false),
+            _ => unreachable!()
         }
     }
 
