@@ -12,6 +12,15 @@ static I_RING: &[u8] = include_bytes!("./images/intricacy_ring.ico");
 static STEEL_BAR: &[u8] = include_bytes!("./images/steel_bar.ico");
 static GOLD_BAR: &[u8] = include_bytes!("./images/hihi.ico");
 
+enum Raids {
+    Akasha,
+    Pbhl,
+    Gohl,
+    Ubhl,
+    Xeno,
+    Event,
+}
+
 #[derive(Default, NwgUi)]
 pub struct BarTracker {
     #[nwg_control(size: (330, 400), position: (500, 500), title: "Dorothy", flags: "WINDOW|VISIBLE")]
@@ -421,7 +430,7 @@ impl BarTracker {
             && add
             && total_chests >= 0
         {
-            self.add_blue_boxes("akasha");
+            self.add_blue_boxes(Raids::Akasha);
         }
 
         if (label == &self.akasha_coronation_ring_label
@@ -431,7 +440,7 @@ impl BarTracker {
             && !add
             && total_chests > 0
         {
-            self.subtract_blue_boxes("akasha");
+            self.subtract_blue_boxes(Raids::Akasha);
         }
 
         if (label == &self.pbhl_coronation_ring_label
@@ -441,7 +450,7 @@ impl BarTracker {
             && add
             && total_chests >= 0
         {
-            self.add_blue_boxes("pbhl");
+            self.add_blue_boxes(Raids::Pbhl);
         }
 
         if (label == &self.pbhl_coronation_ring_label
@@ -451,7 +460,7 @@ impl BarTracker {
             && !add
             && total_chests > 0
         {
-            self.subtract_blue_boxes("pbhl");
+            self.subtract_blue_boxes(Raids::Pbhl);
         }
 
         if (label == &self.gohl_coronation_ring_label
@@ -462,7 +471,7 @@ impl BarTracker {
             && add
             && total_chests >= 0
         {
-            self.add_blue_boxes("gohl");
+            self.add_blue_boxes(Raids::Gohl);
         }
 
         if (label == &self.gohl_coronation_ring_label
@@ -473,7 +482,7 @@ impl BarTracker {
             && !add
             && total_chests > 0
         {
-            self.subtract_blue_boxes("gohl");
+            self.subtract_blue_boxes(Raids::Gohl);
         }
 
         if add {
@@ -579,21 +588,21 @@ impl BarTracker {
 
 
 
-    fn add_blue_boxes(&self, raid: &str) {
+    fn add_blue_boxes(&self, raid: Raids) {
         match raid {
-            "akasha" => self.change_value("akasha_blue_boxes", true),
-            "pbhl" => self.change_value("pbhl_blue_boxes", true),
-            "gohl" => self.change_value("gohl_blue_boxes", true),
-            _ => unreachable!()
+            Raids::Akasha => self.change_value("akasha_blue_boxes", true),
+            Raids::Pbhl => self.change_value("pbhl_blue_boxes", true),
+            Raids::Gohl => self.change_value("gohl_blue_boxes", true),
+            _ => return,
         }
     }
 
-    fn subtract_blue_boxes(&self, raid: &str) {
+    fn subtract_blue_boxes(&self, raid: Raids) {
         match raid {
-            "akasha" => self.change_value("akasha_blue_boxes", false),
-            "pbhl" => self.change_value("pbhl_blue_boxes", false),
-            "gohl" => self.change_value("gohl_blue_boxes", false),
-            _ => unreachable!()
+            Raids::Akasha => self.change_value("akasha_blue_boxes", false),
+            Raids::Pbhl => self.change_value("pbhl_blue_boxes", false),
+            Raids::Gohl => self.change_value("gohl_blue_boxes", false),
+            _ => return,
         }
     }
 
