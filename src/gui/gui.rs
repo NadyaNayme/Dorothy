@@ -823,7 +823,7 @@ impl BarTracker {
     fn app_export_csv(&self) {
         let _ = &crate::modules::csv::export_csv();
         let reset_on_export = crate::modules::database::get_settings_value("reset_on_export");
-        if reset_on_export == "0" {
+        if reset_on_export == "1" {
             let _ = self.reset_labels();
             let _ = self.reset_droprates();
         }

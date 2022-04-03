@@ -81,8 +81,8 @@ pub fn export_csv() -> Result<(), Box<dyn Error>> {
         };
 
         wtr.serialize(logdata)?;
-        let no_reset = get_settings_value("no_reset");
-        if no_reset == "1" {
+        let reset_on_export = get_settings_value("reset_on_export");
+        if reset_on_export == "1" {
             crate::modules::database::reset_log();
         }
         wtr.flush()?;
