@@ -47,6 +47,9 @@ pub struct BarTracker {
     #[nwg_control(text: "Settings", parent: BarTracker::tabs_container)]
     settings_tab: nwg::Tab,
 
+    #[nwg_control(text: "Pulls", parent: BarTracker::tabs_container)]
+    pulls_tab: nwg::Tab,
+
     #[nwg_control(text: "Akasha", parent: BarTracker::tabs_container)]
     akasha_tab: nwg::Tab,
 
@@ -82,6 +85,37 @@ pub struct BarTracker {
     #[nwg_layout_item(layout: grid_layout, col: 0, row: 2, col_span: 4)]
     #[nwg_events(OnButtonClick: [BarTracker::set_only_blues])]
     percentage_count_checkbox: nwg::CheckBox,
+
+    #[nwg_control(parent: BarTracker::pulls_tab, text: "Crystals", font: Some(&data.font))]
+    #[nwg_layout_item(layout: grid_layout, col: 1, row: 0, col_span: 2)]
+    crystals_amount_label: nwg::Label,
+
+    #[nwg_control(parent: BarTracker::pulls_tab, text: "10-Pull Tickets", font: Some(&data.font))]
+    #[nwg_layout_item(layout: grid_layout, col: 1, row: 1, col_span: 2)]
+    ten_pull_tickets_amount_label: nwg::Label,
+
+    #[nwg_control(parent: BarTracker::pulls_tab, text: "1-Pull Tickets", font: Some(&data.font))]
+    #[nwg_layout_item(layout: grid_layout, col: 1, row: 2, col_span: 2)]
+    single_pull_tickets_amount_label: nwg::Label,
+
+    #[nwg_control(parent: BarTracker::pulls_tab, align: nwg::HTextAlign::Right, text: &crate::modules::database::get_db_value("crystals_amount"), flags: "VISIBLE|NUMBER", font: Some(&data.font))]
+    #[nwg_layout_item(layout: grid_layout, col: 0, row: 0, col_span: 1)]
+    #[nwg_events(OnTextInput: [BarTracker::calculate_pulls_on_input(SELF, CTRL, EVT)])]
+    crystals_amount: nwg::TextInput,
+
+    #[nwg_control(parent: BarTracker::pulls_tab, align: nwg::HTextAlign::Right, text: &crate::modules::database::get_db_value("ten_pulls_amount"), flags: "VISIBLE|NUMBER", font: Some(&data.font))]
+    #[nwg_layout_item(layout: grid_layout, col: 0, row: 1, col_span: 1)]
+    #[nwg_events(OnTextInput: [BarTracker::calculate_pulls_on_input(SELF, CTRL, EVT)])]
+    ten_pull_tickets_amount: nwg::TextInput,
+
+    #[nwg_control(parent: BarTracker::pulls_tab, align: nwg::HTextAlign::Right, text: &crate::modules::database::get_db_value("single_pulls_amount"), flags: "VISIBLE|NUMBER", font: Some(&data.font))]
+    #[nwg_layout_item(layout: grid_layout, col: 0, row: 2, col_span: 1)]
+    #[nwg_events(OnTextInput: [BarTracker::calculate_pulls_on_input(SELF, CTRL, EVT)])]
+    single_pull_tickets_amount: nwg::TextInput,
+
+    #[nwg_control(parent: BarTracker::pulls_tab, h_align: nwg::HTextAlign::Center, text: "", font: Some(&data.font))]
+    #[nwg_layout_item(layout: grid_layout, col: 0, row: 3, col_span: 3)]
+    total_pulls_label: nwg::Label,
 
     #[nwg_control(parent: BarTracker::akasha_tab, icon: Some(&nwg::Icon::from_bin(BLUE_CHEST)?))]
     #[nwg_layout_item(layout: grid_layout, col: 0, row: 0)]
@@ -155,39 +189,38 @@ pub struct BarTracker {
     #[nwg_layout_item(layout: grid_layout, col: 5, row: 2)]
     akasha_gold_bar_percentage: nwg::Label,
 
-
     #[nwg_control(parent: BarTracker::akasha_tab, h_align: nwg::HTextAlign::Center, text: "", font: Some(&data.smallfont))]
     #[nwg_layout_item(layout: grid_layout, col: 6, row: 2)]
     akasha_trash_percentage: nwg::Label,
 
     #[nwg_control(parent: BarTracker::akasha_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 1, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     akasha_no_blue_box_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::akasha_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 2, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     akasha_coronation_rings_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::akasha_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 3, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     akasha_lineage_rings_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::akasha_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 4, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     akasha_intricacy_rings_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::akasha_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 5, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     akasha_gold_bars_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::akasha_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 6, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     akasha_trash_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::pbhl_tab, size: (32, 32), icon: Some(&nwg::Icon::from_bin(BLUE_CHEST)?))]
@@ -256,27 +289,27 @@ pub struct BarTracker {
 
     #[nwg_control(parent: BarTracker::pbhl_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 1, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     pbhl_no_blue_box_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::pbhl_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 2, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     pbhl_coronation_rings_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::pbhl_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 3, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     pbhl_lineage_rings_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::pbhl_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 4, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     pbhl_intricacy_rings_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::pbhl_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 5, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     pbhl_gold_bars_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::gohl_tab, size: (32, 32), icon: Some(&nwg::Icon::from_bin(BLUE_CHEST)?))]
@@ -357,32 +390,32 @@ pub struct BarTracker {
 
     #[nwg_control(parent: BarTracker::gohl_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 1, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     gohl_no_blue_box_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::gohl_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 2, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     gohl_coronation_rings_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::gohl_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 3, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     gohl_lineage_rings_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::gohl_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 4, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     gohl_intricacy_rings_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::gohl_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 5, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     gohl_gold_bars_button: nwg::Button,
 
     #[nwg_control(parent: BarTracker::gohl_tab, text: "+1", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 6, row: 3)]
-    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL,EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
+    #[nwg_events(MousePressLeftDown: [BarTracker::button_actions(SELF, CTRL, EVT)], MousePressRightDown: [BarTracker::button_actions(SELF, CTRL, EVT)])]
     gohl_trash_button: nwg::Button,
 }
 
@@ -391,6 +424,7 @@ impl BarTracker {
         let em = &self.embed;
         self.window.set_icon(em.icon_str("DOROTHY", None).as_ref());
         self.calculate_droprates();
+        self.calculate_pulls();
         let last_window_position_x = crate::modules::database::get_settings_value("last_window_position_x").parse::<i32>().unwrap_or_default();
         let last_window_position_y = crate::modules::database::get_settings_value("last_window_position_y").parse::<i32>().unwrap_or_default();
         if last_window_position_x != 0 && last_window_position_y != 0 {
@@ -491,10 +525,12 @@ impl BarTracker {
         if sel_tab == 0 {
             self.window.set_text("Dorothy - Settings");
         } else if sel_tab == 1 {
-            self.window.set_text("Dorothy - Akasha");
+            self.window.set_text("Dorothy - Pulls");
         } else if sel_tab == 2 {
-            self.window.set_text("Dorothy - PBHL");
+            self.window.set_text("Dorothy - Akasha");
         } else if sel_tab == 3 {
+            self.window.set_text("Dorothy - PBHL");
+        } else if sel_tab == 4 {
             self.window.set_text("Dorothy - GOHL");
         }
     }
@@ -839,6 +875,36 @@ impl BarTracker {
             }
             _ => unreachable!(),
         }
+    }
+
+    fn calculate_pulls(&self) {
+        let crystals_amount = Some(self.crystals_amount.text()).unwrap_or_default();
+        let ten_pulls_amount = Some(self.ten_pull_tickets_amount.text()).unwrap_or_default();
+        let single_pulls_amount = Some(self.single_pull_tickets_amount.text()).unwrap_or_default();
+        crate::modules::database::set_db_value("crystals_amount", &crystals_amount);
+        crate::modules::database::set_db_value("ten_pulls_amount", &ten_pulls_amount);
+        crate::modules::database::set_db_value("single_pulls_amount", &single_pulls_amount);
+        let total = BarTracker::calculate_crystal_pulls(crystals_amount.parse::<f32>().unwrap_or_default(), ten_pulls_amount.parse::<f32>().unwrap_or_default(), single_pulls_amount.parse::<f32>().unwrap_or_default());
+        let spark_percentage = crate::modules::utility::get_percentage(total.parse::<f32>().unwrap(), 300.0);
+        self.total_pulls_label.set_text(&("Total: ".to_owned() + &total + " | " + &spark_percentage + " of spark"));
+    }
+
+    fn calculate_pulls_on_input(&self, input: &nwg::TextInput, event: nwg::Event) {
+        use nwg::Event as E;
+        match event {
+            E::OnTextInput => {
+                let _ = &self.calculate_pulls();
+            },
+            _ => unreachable!(),
+        }
+    }
+
+    fn calculate_crystal_pulls(crystals: f32, tenners: f32, singles: f32) -> String {
+        let ten_pulls = ((crystals / 3000.0).floor()) * 10.0;
+        let remaining_crystals_for_single_pulls = crystals % 3000.0;
+        let single_pulls = (remaining_crystals_for_single_pulls / 300.0).floor();
+        let total_pulls = (ten_pulls + single_pulls + (tenners * 10.0) + singles).to_string();
+        String::from(total_pulls)
     }
 
     fn app_export_csv(&self) {
