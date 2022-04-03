@@ -16,9 +16,15 @@ pub fn get_settings_value(field: &str) -> String {
     let val = conf
         .with_section(Some("settings"))
         .get(field)
-        .unwrap()
+        .unwrap_or_else(|| "0")
         .to_string();
     val
+}
+
+pub fn set_settings_value(field: &str, v: &str) {
+    let mut conf = get_db();
+    conf.with_section(Some("settings")).set(field, v);
+    save_db(conf);
 }
 
 pub fn get_db_value(field: &str) -> String {
@@ -26,7 +32,7 @@ pub fn get_db_value(field: &str) -> String {
     let val = conf
         .with_section(Some("drops"))
         .get(field)
-        .unwrap()
+        .unwrap_or_else(|| "0")
         .to_string();
     val
 }
@@ -46,6 +52,7 @@ pub fn reset_log() {
         .set("akasha_lineage_rings", "0")
         .set("akasha_intricacy_rings", "0")
         .set("akasha_gold_bars", "0")
+        .set("akasha_trash", "0")
         .set("pbhl_no_blue_boxes", "0")
         .set("pbhl_blue_boxes", "0")
         .set("pbhl_coronation_rings", "0")
@@ -57,7 +64,7 @@ pub fn reset_log() {
         .set("gohl_coronation_rings", "0")
         .set("gohl_lineage_rings", "0")
         .set("gohl_intricacy_rings", "0")
-        .set("gohl_steel_bars", "0")
+        .set("gohl_trash", "0")
         .set("gohl_gold_bars", "0");
     save_db(conf);
 }
@@ -71,9 +78,10 @@ pub fn create_new_log() {
         let mut conf = Ini::new();
         conf.with_section(None::<String>).set("encoding", "utf-8");
         conf.with_section(Some("settings"))
-            .set("only_blues", "1")
-            .set("no_reset", "0")
-            .set("holding_shift", "0");
+            .set("last_active_tab", "0")
+            .set("always_on_top", "0")
+            .set("only_blues", "0")
+            .set("reset_on_export", "1");
         conf.with_section(Some("drops"))
             .set("akasha_no_blue_boxes", "0")
             .set("akasha_blue_boxes", "0")
@@ -81,6 +89,7 @@ pub fn create_new_log() {
             .set("akasha_lineage_rings", "0")
             .set("akasha_intricacy_rings", "0")
             .set("akasha_gold_bars", "0")
+            .set("akasha_trash", "0")
             .set("pbhl_no_blue_boxes", "0")
             .set("pbhl_blue_boxes", "0")
             .set("pbhl_coronation_rings", "0")
@@ -92,7 +101,7 @@ pub fn create_new_log() {
             .set("gohl_coronation_rings", "0")
             .set("gohl_lineage_rings", "0")
             .set("gohl_intricacy_rings", "0")
-            .set("gohl_steel_bars", "0")
+            .set("gohl_trash", "0")
             .set("gohl_gold_bars", "0");
         save_db(conf);
     }

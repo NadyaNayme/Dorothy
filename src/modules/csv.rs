@@ -14,6 +14,7 @@ pub struct Record {
     date: String,
     akasha_blue_boxes: String,
     akasha_no_blue_boxes: String,
+    akasha_trash: String,
     akasha_coronation_rings: String,
     akasha_lineage_rings: String,
     akasha_intricacy_rings: String,
@@ -26,10 +27,10 @@ pub struct Record {
     pbhl_gold_bars: String,
     gohl_blue_boxes: String,
     gohl_no_blue_boxes: String,
+    gohl_trash: String,
     gohl_coronation_rings: String,
     gohl_lineage_rings: String,
     gohl_intricacy_rings: String,
-    gohl_steel_bars: String,
     gohl_gold_bars: String,
 }
 
@@ -59,6 +60,7 @@ pub fn export_csv() -> Result<(), Box<dyn Error>> {
             date: export_time.format("%Y-%m-%d %H:%M:%S").to_string(),
             akasha_blue_boxes: get_db_value("akasha_blue_boxes"),
             akasha_no_blue_boxes: get_db_value("akasha_no_blue_boxes"),
+            akasha_trash: get_db_value("akasha_trash"),
             akasha_coronation_rings: get_db_value("akasha_coronation_rings"),
             akasha_lineage_rings: get_db_value("akasha_lineage_rings"),
             akasha_intricacy_rings: get_db_value("akasha_intricacy_rings"),
@@ -71,16 +73,16 @@ pub fn export_csv() -> Result<(), Box<dyn Error>> {
             pbhl_gold_bars: get_db_value("pbhl_gold_bars"),
             gohl_blue_boxes: get_db_value("gohl_blue_boxes"),
             gohl_no_blue_boxes: get_db_value("gohl_no_blue_boxes"),
+            gohl_trash: get_db_value("gohl_trash"),
             gohl_coronation_rings: get_db_value("gohl_coronation_rings"),
             gohl_lineage_rings: get_db_value("gohl_lineage_rings"),
             gohl_intricacy_rings: get_db_value("gohl_intricacy_rings"),
-            gohl_steel_bars: get_db_value("gohl_steel_bars"),
             gohl_gold_bars: get_db_value("gohl_gold_bars"),
         };
 
         wtr.serialize(logdata)?;
         let no_reset = get_settings_value("no_reset");
-        if no_reset == "0" {
+        if no_reset == "1" {
             crate::modules::database::reset_log();
         }
         wtr.flush()?;
