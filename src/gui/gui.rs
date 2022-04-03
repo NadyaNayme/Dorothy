@@ -41,6 +41,7 @@ pub struct BarTracker {
     smallfont: nwg::Font,
 
     #[nwg_control(parent: Bartracker::window, size: (450, 225), font: Some(&data.smallfont))]
+    #[nwg_events(TabsContainerChanged: [BarTracker::tab_changed])]
     tabs_container: nwg::TabsContainer,
 
     #[nwg_control(text: "Settings", parent: BarTracker::tabs_container)]
@@ -397,6 +398,7 @@ impl BarTracker {
         }
         let last_active_tab = crate::modules::database::get_settings_value("last_active_tab").parse::<usize>().unwrap_or_default();
         self.tabs_container.set_selected_tab(last_active_tab);
+        self.tab_changed();
         self.init_settings();
         self.window.set_visible(true);
     }
@@ -481,6 +483,19 @@ impl BarTracker {
             crate::modules::database::set_settings_value("reset_on_export", "0");
         } else {
             crate::modules::database::set_settings_value("reset_on_export", "1");
+        }
+    }
+
+    fn tab_changed(&self) {
+        let sel_tab = self.tabs_container.selected_tab();
+        if sel_tab == 0 {
+            self.window.set_text("Dorothy - Settings");
+        } else if sel_tab == 1 {
+            self.window.set_text("Dorothy - Akasha");
+        } else if sel_tab == 2 {
+            self.window.set_text("Dorothy - PBHL");
+        } else if sel_tab == 3 {
+            self.window.set_text("Dorothy - GOHL");
         }
     }
 
