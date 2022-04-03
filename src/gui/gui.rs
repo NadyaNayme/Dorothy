@@ -27,7 +27,7 @@ enum Raids {
 
 #[derive(Default, NwgUi)]
 pub struct BarTracker {
-    #[nwg_control(size: (450, 225), position: (500, 500), title: "Dorothy", flags: "WINDOW|VISIBLE", center:true)]
+    #[nwg_control(size: (450, 225), position: (500, 500), title: "Dorothy", flags: "WINDOW", center:true)]
     #[nwg_events(OnWindowClose: [BarTracker::kill_app], OnInit: [BarTracker::init])]
     window: nwg::Window,
 
@@ -390,9 +390,15 @@ impl BarTracker {
         let em = &self.embed;
         self.window.set_icon(em.icon_str("DOROTHY", None).as_ref());
         self.calculate_droprates();
+        let last_window_position_x = crate::modules::database::get_settings_value("last_window_position_x").parse::<i32>().unwrap_or_default();
+        let last_window_position_y = crate::modules::database::get_settings_value("last_window_position_y").parse::<i32>().unwrap_or_default();
+        if last_window_position_x != 0 && last_window_position_y != 0 {
+            self.window.set_position(last_window_position_x, last_window_position_y);
+        }
         let last_active_tab = crate::modules::database::get_settings_value("last_active_tab").parse::<usize>().unwrap_or_default();
         self.tabs_container.set_selected_tab(last_active_tab);
         self.init_settings();
+        self.window.set_visible(true);
     }
 
     fn init_settings(&self) {
@@ -402,7 +408,7 @@ impl BarTracker {
         let export_reset_setting = crate::modules::database::get_settings_value("reset_on_export");
         if topmost_setting == String::from("1") {
             use winapi::um::winuser::SetWindowPos;
-            use winapi::um::winuser::{HWND_NOTOPMOST, HWND_TOPMOST, SWP_NOMOVE, SWP_NOSIZE};
+            use winapi::um::winuser::{HWND_TOPMOST, SWP_NOMOVE, SWP_NOSIZE};
             self.always_on_top_checkbox.set_check_state(CheckBoxState::Checked);
             unsafe {
                 SetWindowPos(
@@ -830,6 +836,8 @@ impl BarTracker {
     }
 
     fn kill_app(&self) {
+        crate::modules::database::set_settings_value("last_window_position_x", &self.window.position().0.to_string());
+        crate::modules::database::set_settings_value("last_window_position_y", &self.window.position().1.to_string());
         crate::modules::database::set_settings_value("last_active_tab", &self.tabs_container.selected_tab().to_string());
         nwg::stop_thread_dispatch();
     }
