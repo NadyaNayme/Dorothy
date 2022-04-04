@@ -27,7 +27,7 @@ enum Raids {
 
 #[derive(Default, NwgUi)]
 pub struct BarTracker {
-    #[nwg_control(size: (450, 225), position: (500, 500), title: "Dorothy", flags: "WINDOW", center:true)]
+    #[nwg_control(size: (450, 240), position: (500, 500), title: "Dorothy", flags: "WINDOW", center:true)]
     #[nwg_events(OnWindowClose: [BarTracker::kill_app], OnInit: [BarTracker::init])]
     window: nwg::Window,
 
@@ -40,14 +40,56 @@ pub struct BarTracker {
     #[nwg_resource(family: "Meiryo UI", size: 14)]
     smallfont: nwg::Font,
 
-    #[nwg_control(parent: Bartracker::window, size: (450, 225), font: Some(&data.smallfont))]
+    #[nwg_control(text: "&File", disabled: false, parent: BarTracker::window)]
+    file_menu: nwg::Menu,
+
+    #[nwg_control(text: "&Export", disabled: false, parent: BarTracker::file_menu)]
+    #[nwg_events(OnMenuItemSelected: [BarTracker::app_export_csv])]
+    export_menuitem: nwg::MenuItem,
+
+    #[nwg_control(text: "&Settings", disabled: false, parent: BarTracker::window)]
+    settings_menu: nwg::Menu,
+
+    #[nwg_control(text: "&Always On Top", disabled: false, check: true, parent: BarTracker::settings_menu)]
+    #[nwg_events(OnMenuItemSelected: [BarTracker::change_settings(SELF, CTRL)])]
+    always_on_top_menuitem: nwg::MenuItem,
+
+    #[nwg_control(text: "&Reset Counts on Export", disabled: false, check: true, parent: BarTracker::settings_menu)]
+    #[nwg_events(OnMenuItemSelected: [BarTracker::change_settings(SELF, CTRL)])]
+    reset_counts_menuitem: nwg::MenuItem,
+
+    #[nwg_control(text: "&Calculate droprates by kills", disabled: false, check: false, parent: BarTracker::settings_menu)]
+    #[nwg_events(OnMenuItemSelected: [BarTracker::change_settings(SELF, CTRL)])]
+    calculate_drops_menuitem: nwg::MenuItem,
+
+    #[nwg_control(text: "&Helpful Links", disabled: false, parent: BarTracker::window)]
+    helpful_links_menu: nwg::Menu,
+
+    #[nwg_control(text: "&Latest Dorothy Release (github.com)", disabled: false, parent: BarTracker::helpful_links_menu)]
+    #[nwg_events(OnMenuItemSelected: [BarTracker::open_to_webpage(SELF, CTRL)])]
+    dorothy_github_link: nwg::MenuItem,
+
+    #[nwg_control(text: "GBF &Wiki (gbf.wiki)", disabled: false, parent: BarTracker::helpful_links_menu)]
+    #[nwg_events(OnMenuItemSelected: [BarTracker::open_to_webpage(SELF, CTRL)])]
+    gbf_wiki_link: nwg::MenuItem,
+
+    #[nwg_control(text: "Online &Tools (granblue.party)", disabled: false, parent: BarTracker::helpful_links_menu)]
+    #[nwg_events(OnMenuItemSelected: [BarTracker::open_to_webpage(SELF, CTRL)])]
+    granblue_party_link: nwg::MenuItem,
+
+    #[nwg_control(text: "&Raidfinder (gbf.life)", disabled: false, parent: BarTracker::helpful_links_menu)]
+    #[nwg_events(OnMenuItemSelected: [BarTracker::open_to_webpage(SELF, CTRL)])]
+    raidfinder_link: nwg::MenuItem,
+
+    #[nwg_control(text: "/r/&Granblue_en (reddit.com)", disabled: false, parent: BarTracker::helpful_links_menu)]
+    #[nwg_events(OnMenuItemSelected: [BarTracker::open_to_webpage(SELF, CTRL)])]
+    subreddit_link: nwg::MenuItem,
+
+    #[nwg_control(parent: Bartracker::window, size: (450, 240), font: Some(&data.smallfont))]
     #[nwg_events(TabsContainerChanged: [BarTracker::tab_changed])]
     tabs_container: nwg::TabsContainer,
 
-    #[nwg_control(text: "Settings", parent: BarTracker::tabs_container)]
-    settings_tab: nwg::Tab,
-
-    #[nwg_control(text: "Pulls", parent: BarTracker::tabs_container)]
+    #[nwg_control(text: "Spark Calc", parent: BarTracker::tabs_container)]
     pulls_tab: nwg::Tab,
 
     #[nwg_control(text: "Akasha", parent: BarTracker::tabs_container)]
@@ -61,30 +103,6 @@ pub struct BarTracker {
 
     #[nwg_layout(parent: BarTracker::tabs_container, margin: [10, 10, 10, 10], spacing: 2, min_size: [450, 200], max_size: [520, 200])]
     grid_layout: nwg::GridLayout,
-
-    #[nwg_control(parent: BarTracker::settings_tab, text: " 心臓蛇団のスーパーシークレットプログラム", font: Some(&data.font))]
-    #[nwg_layout_item(layout: grid_layout, col: 0, row: 3, col_span: 4)]
-    instructions: nwg::Label,
-
-    #[nwg_control(parent: BarTracker::settings_tab, text: "Export", font: Some(&data.font))]
-    #[nwg_layout_item(layout: grid_layout, col: 5, row: 0, col_span: 2)]
-    #[nwg_events(OnButtonClick: [BarTracker::app_export_csv])]
-    export: nwg::Button,
-
-    #[nwg_control(parent: BarTracker::settings_tab, text: "Always On Top", font: Some(&data.font))]
-    #[nwg_layout_item(layout: grid_layout, col: 0, row: 0, col_span: 4)]
-    #[nwg_events(OnButtonClick: [BarTracker::set_topmost])]
-    always_on_top_checkbox: nwg::CheckBox,
-
-    #[nwg_control(parent: BarTracker::settings_tab, text: "Reset Counts on Export", font: Some(&data.font))]
-    #[nwg_layout_item(layout: grid_layout, col: 0, row: 1, col_span: 4)]
-    #[nwg_events(OnButtonClick: [BarTracker::set_export_reset])]
-    export_reset_checkbox: nwg::CheckBox,
-
-    #[nwg_control(parent: BarTracker::settings_tab, text: "Percentage of Total Chests", font: Some(&data.font))]
-    #[nwg_layout_item(layout: grid_layout, col: 0, row: 2, col_span: 4)]
-    #[nwg_events(OnButtonClick: [BarTracker::set_only_blues])]
-    percentage_count_checkbox: nwg::CheckBox,
 
     #[nwg_control(parent: BarTracker::pulls_tab, text: "Crystals", font: Some(&data.font))]
     #[nwg_layout_item(layout: grid_layout, col: 1, row: 0, col_span: 2)]
@@ -445,7 +463,7 @@ impl BarTracker {
         if topmost_setting == String::from("1") {
             use winapi::um::winuser::SetWindowPos;
             use winapi::um::winuser::{HWND_TOPMOST, SWP_NOMOVE, SWP_NOSIZE};
-            self.always_on_top_checkbox.set_check_state(CheckBoxState::Checked);
+            self.always_on_top_menuitem.set_checked(true);
             unsafe {
                 SetWindowPos(
                     app_rc.window.handle.hwnd().unwrap(),
@@ -457,16 +475,36 @@ impl BarTracker {
                     SWP_NOMOVE | SWP_NOSIZE,
                 );
             };
+        } else {
+            self.always_on_top_menuitem.set_checked(false);
         }
         if only_blues_setting == String::from("1") {
-            self.percentage_count_checkbox.set_check_state(CheckBoxState::Checked);
+            self.calculate_drops_menuitem.set_checked(true);
+        } else {
+            self.calculate_drops_menuitem.set_checked(false);
         }
         if export_reset_setting == String::from("1") {
-            self.export_reset_checkbox.set_check_state(CheckBoxState::Checked);
+            self.reset_counts_menuitem.set_checked(true);
+        } else {
+            self.reset_counts_menuitem.set_checked(false);
         }
     }
 
-    fn set_topmost(app_rc: &Rc<BarTracker>) {
+    fn change_settings(&self, menuitem: &nwg::MenuItem) {
+        let app_rc = Rc::new(self);
+        if menuitem == &self.reset_counts_menuitem {
+            BarTracker::set_export_reset(&self);
+            menuitem.set_checked(!menuitem.checked());
+        } else if menuitem == &self.always_on_top_menuitem {
+            BarTracker::set_topmost(&app_rc);
+            menuitem.set_checked(!menuitem.checked());
+        } else if menuitem == &self.calculate_drops_menuitem {
+            BarTracker::set_only_blues(&self);
+            menuitem.set_checked(!menuitem.checked());
+        }
+    }
+
+    fn set_topmost(app_rc: &Rc<&BarTracker>) {
         use winapi::um::winuser::SetWindowPos;
         use winapi::um::winuser::{HWND_NOTOPMOST, HWND_TOPMOST, SWP_NOMOVE, SWP_NOSIZE};
 
@@ -913,6 +951,27 @@ impl BarTracker {
         if reset_on_export == "1" {
             let _ = self.reset_labels();
             let _ = self.reset_droprates();
+        }
+    }
+
+    fn open_to_webpage(&self, input: &nwg::MenuItem) {
+        if input == &self.gbf_wiki_link {
+            let url = "https://gbf.wiki/Main_Page";
+            let _ = open::that(&url).unwrap();
+        } else if input == &self.dorothy_github_link {
+            let url = "https://github.com/NadyaNayme/Dorothy/releases/latest";
+            let _ = open::that(&url).unwrap();
+        } else if input == &self.subreddit_link {
+            let url = "https://www.reddit.com/r/Granblue_en/";
+            let _ = open::that(&url).unwrap();
+        } else if input == &self.raidfinder_link {
+            let url = "https://gbf.life/";
+            let _ = open::that(&url).unwrap();
+        } else if input == &self.granblue_party_link {
+            let url = "https://www.granblue.party/";
+            let _ = open::that(&url).unwrap();
+        }  else {
+            ();
         }
     }
 
