@@ -561,14 +561,12 @@ impl BarTracker {
     fn tab_changed(&self) {
         let sel_tab = self.tabs_container.selected_tab();
         if sel_tab == 0 {
-            self.window.set_text("Dorothy - Settings");
-        } else if sel_tab == 1 {
             self.window.set_text("Dorothy - Pulls");
-        } else if sel_tab == 2 {
+        } else if sel_tab == 1 {
             self.window.set_text("Dorothy - Akasha");
-        } else if sel_tab == 3 {
+        } else if sel_tab == 2 {
             self.window.set_text("Dorothy - PBHL");
-        } else if sel_tab == 4 {
+        } else if sel_tab == 3 {
             self.window.set_text("Dorothy - GOHL");
         }
     }
