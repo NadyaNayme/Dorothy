@@ -622,7 +622,7 @@ impl BarTracker {
             "gohl_intricacy_rings" => &self.gohl_intricacy_ring_label,
             "gohl_gold_bars" => &self.gohl_gold_bar_label,
             "gohl_trash" => &self.gohl_trash_label,
-            _ => &self.pbhl_blue_box_label,
+            _ => unreachable!(),
         };
 
         let mut total_chests = label.text().parse::<i32>().unwrap();
@@ -760,14 +760,15 @@ impl BarTracker {
             total_gohl_chests = *total_gohl_blue_chests;
         }
         let dropped_chests = label.text().parse::<f32>().unwrap();
+        let selected_tab = self.tabs_container.selected_tab();
 
-        if total_akasha_blue_chests >= &0.0 && total_akasha_chests >= 1.0 {
+        if total_akasha_blue_chests >= &0.0 && total_akasha_chests >= 1.0 && selected_tab == 1 as usize {
             percentage.set_text(&get_percentage(dropped_chests, total_akasha_chests));
         }
-        if total_pbhl_blue_chests >= &0.0 && total_pbhl_chests >= 1.0 {
+        if total_pbhl_blue_chests >= &0.0 && total_pbhl_chests >= 1.0 && selected_tab == 2 as usize {
             percentage.set_text(&get_percentage(dropped_chests, total_pbhl_chests));
         }
-        if total_gohl_blue_chests >= &0.0 && total_gohl_chests >= 1.0 {
+        if total_gohl_blue_chests >= &0.0 && total_gohl_chests >= 1.0 && selected_tab == 3 as usize {
             percentage.set_text(&get_percentage(dropped_chests, total_gohl_chests));
         }
     }
@@ -789,9 +790,16 @@ impl BarTracker {
             "gohl_gold_bars",
             "gohl_trash",
         ];
+        let selected_tab = self.tabs_container.selected_tab();
 
-        for percentage_control in percentage_controls {
-            self.calculate_droprate(percentage_control);
+        for (i, control) in percentage_controls.iter().enumerate() {
+            if i <= 4 && selected_tab == 1 as usize {
+                self.calculate_droprate(control);
+            } else if i >= 5 && i <= 8 && selected_tab == 2 as usize {
+                self.calculate_droprate(control);
+            } else if i >= 9 && selected_tab == 3 as usize {
+                self.calculate_droprate(control);
+            }
         }
     }
 
